@@ -83,7 +83,7 @@ func main() {
 	opts.SrcFileLength = 32
 	slog.SetDefault(slog.New(slogcolor.NewHandler(os.Stderr, opts)))
 
-	slog.Info("syobon-g version", "version", Version)
+	slog.Info("syobon-go version", "version", Version)
 	slog.Info("Go version", "version", runtime.Version(), "os", runtime.GOOS, "arch", runtime.GOARCH)
 
 	//TODO: window icon
