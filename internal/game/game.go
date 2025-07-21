@@ -18,6 +18,7 @@ package game
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
@@ -26,7 +27,40 @@ const (
 	Height = 420
 )
 
-type Game struct{}
+type Game struct {
+	grap  [][8]*ebiten.Image
+	mgrap []*ebiten.Image
+	otom  []*audio.Player
+	oto   []*audio.Player
+
+	anx  []int
+	any_ []int
+	ne   []int
+	nf   []int
+
+	audioCtx *audio.Context
+}
+
+func New() (*Game, error) {
+	g := &Game{
+		grap:  make([][8]*ebiten.Image, 161),
+		mgrap: make([]*ebiten.Image, 51),
+		otom:  make([]*audio.Player, 6),
+		oto:   make([]*audio.Player, 19),
+		anx:   make([]int, 160),
+		any_:  make([]int, 160),
+		ne:    make([]int, 40),
+		nf:    make([]int, 40),
+	}
+
+	g.audioCtx = audio.NewContext(44100)
+
+	if err := g.loadg(); err != nil {
+		return nil, err
+	}
+
+	return g, nil
+}
 
 func (g *Game) InitEbiten() {
 	ebiten.SetWindowSize(Width, Height)

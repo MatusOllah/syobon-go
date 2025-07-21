@@ -77,7 +77,7 @@ func main() {
 		defer pprof.StopCPUProfile()
 	}
 
-	// Logger (using slogcolor: https://github.com/MatusOllah/slogcolor)
+	// Logger
 	opts := slogcolor.DefaultOptions
 	opts.Level = getLogLevel()
 	opts.SrcFileLength = 32
@@ -89,7 +89,10 @@ func main() {
 	//TODO: window icon
 
 	slog.Info("initializing game")
-	g := &game.Game{}
+	g, err := game.New()
+	if err != nil {
+		slog.Error("failed to initialize game", "err", err)
+	}
 
 	// Ebiten init
 	slog.Info("initializing ebitengine")
