@@ -22,6 +22,7 @@ import (
 	"image"
 	_ "image/png"
 	"io/fs"
+	"log/slog"
 
 	"github.com/MatusOllah/syobon-go/assets"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -33,6 +34,8 @@ import (
 func (g *Game) loadg() (err error) {
 	// I do not understand any of these Japanese comments xD
 	// But this seems to load spritesheets, slice them, and then load audio files.
+
+	slog.Info("loading game resources")
 
 	//プレイヤー
 	g.mgrap[0], _, err = ebitenutil.NewImageFromFileSystem(assets.FS, "res/player.png")

@@ -17,9 +17,17 @@
 package game
 
 import (
+	"fmt"
+	"log/slog"
+
+	"github.com/MatusOllah/syobon-go/assets"
+	"github.com/MatusOllah/syobon-go/internal/config"
+	"github.com/MatusOllah/syobon-go/internal/controls"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
+	input "github.com/quasilyte/ebitengine-input"
 )
 
 const (
@@ -38,7 +46,12 @@ type Game struct {
 	ne   []int
 	nf   []int
 
-	audioCtx *audio.Context
+	fonts []*text.GoTextFace
+
+	audioCtx    *audio.Context
+	cfg         *config.Config
+	inputSystem input.System
+	input       *input.Handler
 }
 
 func New() (*Game, error) {
@@ -51,15 +64,57 @@ func New() (*Game, error) {
 		any_:  make([]int, 160),
 		ne:    make([]int, 40),
 		nf:    make([]int, 40),
+		fonts: make([]*text.GoTextFace, 64),
 	}
 
-	g.audioCtx = audio.NewContext(44100)
+	// Config
+	var err error
+	g.cfg, err = config.Parse()
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse config: %w", err)
+	}
 
+	// Input
+	g.inputSystem.Init(input.SystemConfig{DevicesEnabled: input.AnyDevice})
+	keymap, err := controls.LoadKeymapFromConfig(*g.cfg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load keymap: %w", err)
+	}
+	g.input = g.inputSystem.NewHandler(0, keymap)
+
+	// Audio
+	g.audioCtx = audio.NewContext(g.cfg.Audio.SampleRate)
+
+	// Resources
 	if err := g.loadg(); err != nil {
 		return nil, err
 	}
 
+	if err := g.setFontSize(16); err != nil {
+		return nil, fmt.Errorf("unable to load font: %w", err)
+	}
+
 	return g, nil
+}
+
+func (g *Game) setFontSize(size int) error {
+	f, err := assets.FS.Open("res/sazanami-gothic.ttf")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	src, err := text.NewGoTextFaceSource(f)
+	if err != nil {
+		return err
+	}
+
+	g.fonts[size] = &text.GoTextFace{
+		Source: src,
+		Size:   float64(size),
+	}
+
+	return nil
 }
 
 func (g *Game) InitEbiten() {
@@ -72,6 +127,14 @@ func (g *Game) Start() error {
 }
 
 func (g *Game) Update() error {
+	g.inputSystem.Update()
+
+	if g.input.ActionIsJustPressed(controls.ActionFullscreen) {
+		g.cfg.Graphics.Fullscreen = !g.cfg.Graphics.Fullscreen
+		ebiten.SetFullscreen(g.cfg.Graphics.Fullscreen)
+		slog.Info("toggled fullscreen mode", "enabled", g.cfg.Graphics.Fullscreen)
+	}
+
 	return nil
 }
 
