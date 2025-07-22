@@ -24,7 +24,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hashicorp/hcl/v2/hclsimple"
+	"github.com/BurntSushi/toml"
 )
 
 func Parse() (*Config, error) {
@@ -51,7 +51,7 @@ func Parse() (*Config, error) {
 	}
 
 	var cfg Config
-	if err := hclsimple.Decode("config.hcl", b, nil, &cfg); err != nil {
+	if err := toml.Unmarshal(b, &cfg); err != nil {
 		return nil, err
 	}
 

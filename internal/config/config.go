@@ -18,34 +18,34 @@ package config
 
 import _ "embed"
 
-//go:embed default_config.hcl
+//go:embed default_config.toml
 var defaultConfig []byte
 
 type Config struct {
-	Controls Controls `hcl:"controls,block"`
-	Audio    Audio    `hcl:"audio,block"`
-	Graphics Graphics `hcl:"graphics,block"`
+	Controls Controls `toml:"controls"`
+	Audio    Audio    `toml:"audio"`
+	Graphics Graphics `toml:"graphics"`
 }
 
 type Controls struct {
-	Left          []string `hcl:"left"`
-	Right         []string `hcl:"right"`
-	Jump          []string `hcl:"jump"`
-	DoubleSpeed   []string `hcl:"double_speed"`
-	SelfDestruct  []string `hcl:"self_destruct"`
-	Exit          []string `hcl:"exit"`
-	ReturnToTitle []string `hcl:"return_to_title"`
-	Fullscreen    []string `hcl:"fullscreen"`
+	Left          []string `toml:"left"`
+	Right         []string `toml:"right"`
+	Jump          []string `toml:"jump"`
+	DoubleSpeed   []string `toml:"double_speed"`
+	SelfDestruct  []string `toml:"self_destruct"`
+	Exit          []string `toml:"exit"`
+	ReturnToTitle []string `toml:"return_to_title"`
+	Fullscreen    []string `toml:"fullscreen"`
 }
 
 type Audio struct {
-	Mute         bool    `hcl:"mute"`
-	MasterVolume float64 `hcl:"master_volume"`
-	SampleRate   int     `hcl:"sample_rate"`
+	Mute         bool    `toml:"mute"`
+	MasterVolume float64 `toml:"master_volume"`
+	SampleRate   int     `toml:"sample_rate"`
 }
 
 type Graphics struct {
-	Fullscreen       bool `hcl:"fullscreen"`
-	VSync            bool `hcl:"vsync"`
-	EnableFPSCounter bool `hcl:"enable_fps_counter"`
+	Fullscreen       bool `toml:"fullscreen"`
+	VSync            bool `toml:"vsync"`
+	EnableFPSCounter bool `toml:"enable_fps_counter"`
 }

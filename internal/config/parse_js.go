@@ -18,12 +18,12 @@
 
 package config
 
-import "github.com/hashicorp/hcl/v2/hclsimple"
+import "github.com/BurntSushi/toml"
 
 func Parse() (*Config, error) {
 	// In js/wasm, we can't actually dump the default config file so we're just parsing the default config directly.
 	var cfg Config
-	if err := hclsimple.Decode("config.hcl", defaultConfig, nil, &cfg); err != nil {
+	if err := toml.Unmarshal(defaultConfig, &cfg); err != nil {
 		return nil, err
 	}
 	return &cfg, nil
